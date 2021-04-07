@@ -131,6 +131,12 @@ int main(int argc, char *argv[]){
                         void* arguments;
                         //once in exec make sure at least 5 arguments
                         arguments = toExecute->parse_arguments(argc - 5, argv + 5);
+                        if(arguments == NULL){
+
+                            cerr << "Error: Invalid plugin arguments" << endl;
+                            return 1;
+
+                        }
                         //check if parse arguments is null
                         transformedImg = toExecute->transform_image(img, arguments);
                         if(transformedImg == NULL){
