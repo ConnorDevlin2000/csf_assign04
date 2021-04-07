@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <vector>
+#include "image.h"
 
 using namespace std;
 
@@ -27,12 +28,13 @@ int main(int argc, char *argv[]){
         PLUGIN_DIR = "./plugins";
     } else {
         PLUGIN_DIR = getenv("PLUGIN_DIR");
+        //Will PLUGIN_DIR environmental variable have a / at the end?
     }
 
     struct dirent* entry;
     vector<Plugin*> plugins;
-
-    if(argc == 1 || !(argc >= 2 && argc <= 6)){
+    //CALL DCLOSE ON CLEANUP
+    if(argc == 1){
 
         cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;
         return 1;
@@ -57,27 +59,113 @@ int main(int argc, char *argv[]){
                     strcpy(charArrPath, path.c_str());
                     charArrPath[path.length()] = '\0';
                     p->handle = dlopen(charArrPath, RTLD_LAZY);
+                    if(p->handle == NULL){
+
+                        cerr << "Error: Could not load plugin" << endl;
+                        return 1;
+
+                    }
                     *(void**)(&p->get_plugin_name) = dlsym(p->handle, "get_plugin_name");
                     *(void**)(&p->get_plugin_desc) = dlsym(p->handle, "get_plugin_desc");
                     *(void**)(&p->parse_arguments) = dlsym(p->handle, "parse_arguments");
-                    *(void**)(&p->parse_arguments) = dlsym(p->handle, "transform_image");
+                    *(void**)(&p->transform_image) = dlsym(p->handle, "transform_image");
+                    if(p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
+
+                        cerr << "Error: Could not find required API function" << endl;
+                        return 1;
+
+                    }
                     plugins.push_back(p);
                 }
+
+
+            }
+
+            if(strcmp(argv[1], "list") == 0){
+
+                if(argc != 2){
+
+                    cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;
+                    cerr << "Error: Too many arguments" << endl;
+                    return 1;
+
+                }
+                cout << "Loaded " << plugins.size() << " plugin(s)" << endl;
+                for(int i = 0; i < plugins.size(); i++){
+
+                    cout << " " << (plugins[i]->get_plugin_name()) << ": " << (plugins[i]->get_plugin_desc()) << endl;
+
+                }
+            } else if (strcmp(argv[1], "exec") == 0){
+
+                bool found = true;//SHOULD BE FALSEEEEE
+                Plugin* toExecute = (Plugin*)(malloc(sizeof(Plugin)));
+                for(int i = 0; i < plugins.size(); i++){
+
+                    if(strcmp(plugins[i]->get_plugin_name(), argv[2]) == 0){
+
+                        toExecute = plugins[i];
+                        found = true;
+                        break;
+
+                    }
+
+                }
+                Plugin* toExecute = plugins[2];//DELETE THIS AFTER TESTING
+                if(!found){
+
+                    cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;
+                    cerr << "Error: Could not find plugin" << endl;
+                    return 1;
+
+                } else {
+
+                    Image* img = img_read_png(argv[3]);
+                    if(img == NULL){
+
+                        cerr << "Error: Cannot ready PNG file" << endl;
+                        return 1;
+
+                    } else {
+
+                        // if(strcmp(argv[2], "tile") == 0 || strcmp(arv[2], "expose") == 0){
+
+                        //     img = transform_image(img, parse_arguments(0,NULL));
+
+                        // } else {
+
+                            
+
+                        // }
+                        void* arguments = toExecute->parse_arguments(0, NULL);
+                        Image* transformedImg = toExecute->transform_image(img, arguments);
+                        img_write_png(transformedImg, argv[4]);
+                        for(int i = 0; i < plugins.size(); i++){
+
+                            dlclose(plugins[i]->handle);
+                            free(plugins[i]);
+
+                        }
+                        free(img);
+                        free(transformedImg);
+
+                    }
+
+                }
+
+            } else {
+
+                cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;
+                cerr << "Error: Unknown command" << endl;
+                return 1;
 
             }
         }
         closedir(directory);
     }
-    
-    
-    else if (strcmp(argv[1], "list") == 0){
-
-        
-
-    }
 
     
 
-    
+    return 0;
 
 }
