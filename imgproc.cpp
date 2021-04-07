@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
                 }
             } else if (strcmp(argv[1], "exec") == 0){
 
-                bool found = true;//SHOULD BE FALSEEEEE
+                bool found = false;//SHOULD BE FALSEEEEE
                 Plugin* toExecute = (Plugin*)(malloc(sizeof(Plugin)));
                 for(int i = 0; i < plugins.size(); i++){
 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
                     }
 
                 }
-                Plugin* toExecute = plugins[2];//DELETE THIS AFTER TESTING
+                //Plugin* toExecute = plugins[2];//DELETE THIS AFTER TESTING
                 if(!found){
 
                     cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;

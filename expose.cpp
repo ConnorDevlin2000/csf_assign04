@@ -46,11 +46,6 @@ static uint32_t multiplyFactor(uint32_t pix, Arguments *args) {
 	} else {
 		b *= args->factor;
 	}
-	if (args->factor * (uint32_t)a > 255) {
-		a = 255;
-	} else {
-		a *= args->factor;
-	}
 	return img_pack_pixel(r, g, b, a);
 }
 
