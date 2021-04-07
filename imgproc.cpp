@@ -141,6 +141,7 @@ int main(int argc, char *argv[]){
                             if(transformedImg == NULL){
 
                                 cerr << "Error: Could not transform image" << endl;
+                                return 1;
  
                             }
 
