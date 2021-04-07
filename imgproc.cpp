@@ -69,12 +69,12 @@ int main(int argc, char *argv[]){
                     *(void**)(&p->get_plugin_desc) = dlsym(p->handle, "get_plugin_desc");
                     *(void**)(&p->parse_arguments) = dlsym(p->handle, "parse_arguments");
                     *(void**)(&p->transform_image) = dlsym(p->handle, "transform_image");
-                    if(p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
+                    // if(p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
 
-                        cerr << "Error: Could not find required API function" << endl;
-                        return 1;
+                    //     cerr << "Error: Could not find required API function" << endl;
+                    //     return 1;
 
-                    }
+                    // }
                     plugins.push_back(p);
                 }
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
                 }
             } else if (strcmp(argv[1], "exec") == 0){
 
-                bool found = false;//SHOULD BE FALSEEEEE
+                bool found = false;
                 Plugin* toExecute = (Plugin*)(malloc(sizeof(Plugin)));
                 for(int i = 0; i < plugins.size(); i++){
 
@@ -127,19 +127,22 @@ int main(int argc, char *argv[]){
                         return 1;
 
                     } else {
+                        Image* transformedImg;
+                        void* arguments;
+                        if(strcmp(argv[2], "tile") == 0 || strcmp(argv[2], "expose") == 0){
+                            //WHY DOES parse_arguments NEED A  CHAR** FOR SECOND PARAM??
+                            arguments = toExecute->parse_arguments(1, NULL);
+                            transformedImg = toExecute->transform_image(img, arguments);
 
-                        // if(strcmp(argv[2], "tile") == 0 || strcmp(arv[2], "expose") == 0){
+                        } else {
 
-                        //     img = transform_image(img, parse_arguments(0,NULL));
+                            arguments = toExecute->parse_arguments(1, NULL);
+                            transformedImg = toExecute->transform_image(img, arguments);
 
-                        // } else {
+                        }
 
-                            
-
-                        // }
-                        void* arguments = toExecute->parse_arguments(0, NULL);
-                        Image* transformedImg = toExecute->transform_image(img, arguments);
                         img_write_png(transformedImg, argv[4]);
+                        //WHY DO I HAVE 2 UNACCOUNTED FOR MEMORY ALLOCATIONS!!
                         for(int i = 0; i < plugins.size(); i++){
 
                             dlclose(plugins[i]->handle);
@@ -164,7 +167,6 @@ int main(int argc, char *argv[]){
         closedir(directory);
     }
 
-    
 
     return 0;
 
