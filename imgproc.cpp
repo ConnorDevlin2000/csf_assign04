@@ -138,6 +138,11 @@ int main(int argc, char *argv[]){
 
                             arguments = toExecute->parse_arguments(1, NULL);
                             transformedImg = toExecute->transform_image(img, arguments);
+                            if(transformedImg == NULL){
+
+                                cerr << "Error: Could not transform image" << endl;
+ 
+                            }
 
                         }
 

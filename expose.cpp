@@ -15,7 +15,7 @@ const char *get_plugin_name(void) {
 }
 
 const char *get_plugin_desc(void) {
-	return "apply the expose effect to a given image";
+	return "adjust the intensity of all pixels";
 }
 
 void *parse_arguments(int num_args, char *args[]) {
