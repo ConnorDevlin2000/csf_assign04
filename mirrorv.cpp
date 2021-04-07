@@ -38,8 +38,8 @@ struct Image *transform_image(struct Image *source, void *arg_data) {
 		return NULL;
 	}
     // Transform vertically
-	for (unsigned i = 0; i < source->height; i++) {
-        for (unsigned j = 0; j < source-> width / 2; j++) {
+	for (unsigned i = 0; i < source->width; i++) {
+        for (unsigned j = 0; j < source->height / 2; j++) {
             int x = source->width * j + i;
             int c = source->width * (source->height - j - 1) + i;
             out->data[x] = source->data[c];
