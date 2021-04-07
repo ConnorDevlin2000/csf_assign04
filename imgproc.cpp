@@ -69,12 +69,12 @@ int main(int argc, char *argv[]){
                     *(void**)(&p->get_plugin_desc) = dlsym(p->handle, "get_plugin_desc");
                     *(void**)(&p->parse_arguments) = dlsym(p->handle, "parse_arguments");
                     *(void**)(&p->transform_image) = dlsym(p->handle, "transform_image");
-                    // if(p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
+                    if(p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
 
-                    //     cerr << "Error: Could not find required API function" << endl;
-                    //     return 1;
+                        cerr << "Error: Could not find required API function" << endl;
+                        return 1;
 
-                    // }
+                    }
                     plugins.push_back(p);
                 }
 
@@ -129,22 +129,13 @@ int main(int argc, char *argv[]){
                     } else {
                         Image* transformedImg;
                         void* arguments;
-                        if(strcmp(argv[2], "tile") == 0 || strcmp(argv[2], "expose") == 0){
-                            //WHY DOES parse_arguments NEED A  CHAR** FOR SECOND PARAM??
-                            arguments = toExecute->parse_arguments(1, NULL);
-                            transformedImg = toExecute->transform_image(img, arguments);
-
-                        } else {
-
-                            arguments = toExecute->parse_arguments(1, NULL);
-                            transformedImg = toExecute->transform_image(img, arguments);
-                            if(transformedImg == NULL){
-
-                                cerr << "Error: Could not transform image" << endl;
-                                return 1;
- 
-                            }
-
+                        //once in exec make sure at least 5 arguments
+                        arguments = toExecute->parse_arguments(argc - 5, argv + 5);
+                        //check if parse arguments is null
+                        transformedImg = toExecute->transform_image(img, arguments);
+                        if(transformedImg == NULL){
+                            cerr << "Error: Could not transform image" << endl;
+                            return 1;
                         }
 
                         img_write_png(transformedImg, argv[4]);
@@ -172,7 +163,6 @@ int main(int argc, char *argv[]){
         }
         closedir(directory);
     }
-
 
     return 0;
 
