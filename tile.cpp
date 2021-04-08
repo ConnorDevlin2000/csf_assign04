@@ -16,7 +16,7 @@ const char* get_plugin_name(void) {
 }
 
 const char* get_plugin_desc(void) {
-    return "generates an image containing an N x N arrangement of tiles";
+    return "tile source image in an NxN arrangement";
 }
 
 void* parse_arguments(int num_args, char* args[]) {
