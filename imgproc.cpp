@@ -13,6 +13,7 @@
 #include <dlfcn.h>
 #include <vector>
 #include "image.h"
+#include <stdint.h>
 
 using namespace std;
 
@@ -98,7 +99,7 @@ int loadPlugins(DIR* directory, vector<Plugin*> &plugins, const char* PLUGIN_DIR
  */
 void listPlugins(vector<Plugin*> plugins){
     cout << "Loaded " << plugins.size() << " plugin(s)" << endl;
-    for(int i = 0; i < plugins.size(); i++){
+    for(uint32_t i = 0; i < plugins.size(); i++){
         cout << " " << (plugins[i]->get_plugin_name()) << ": " << (plugins[i]->get_plugin_desc()) << endl;
     }
 }
@@ -115,7 +116,7 @@ Plugin* findPlugin(char* pluginName, vector<Plugin*> plugins){
     bool found = false;
     Plugin* toExecute;
     //Iterate through vector looking for plugin with pluginName
-    for(int i = 0; i < plugins.size(); i++) {
+    for(uint32_t i = 0; i < plugins.size(); i++) {
         if (strcmp(plugins[i]->get_plugin_name(), pluginName) == 0) {
             toExecute = plugins[i];
             found = true;
@@ -172,7 +173,7 @@ int handleCommandLineErrors(int argc, char* argv[]){
  *    void
  */
 void freeAll(vector<Plugin*> plugins, Image* img, Image* transformedImg, DIR* directory){
-    for(int i = 0; i < plugins.size(); i++) {
+    for(uint32_t i = 0; i < plugins.size(); i++) {
         dlclose(plugins[i]->handle);
         free(plugins[i]);
     }
@@ -190,7 +191,7 @@ void freeAll(vector<Plugin*> plugins, Image* img, Image* transformedImg, DIR* di
  *    void
  */
 void freePlugins(vector<Plugin*> plugins, DIR* directory){
-    for(int i = 0; i < plugins.size(); i++) {
+    for(uint32_t i = 0; i < plugins.size(); i++) {
         dlclose(plugins[i]->handle);
         free(plugins[i]);
     }

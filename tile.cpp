@@ -7,7 +7,10 @@
 
 #include <stdlib.h>
 #include "image_plugin.h"
+#include <string.h>
 #include <string>
+#include <stdint.h>
+
 
 struct Arguments {
     // Specifies the tiling factor.
@@ -23,7 +26,7 @@ const char* get_plugin_desc(void) {
 }
 
 void* parse_arguments(int num_args, char* args[]) {
-    if (num_args != 1 || (atof(args[0]) < 2 || (args[0] == "0" && args[0][0] != '0'))) {
+    if (num_args != 1 || (atof(args[0]) < 2 || (strcmp(args[0], "0") == 0 && args[0][0] != '0'))) {
         return NULL;
     }
     struct Arguments* a = (Arguments*)calloc(1, sizeof(Arguments));
@@ -32,10 +35,10 @@ void* parse_arguments(int num_args, char* args[]) {
 }
 
 /* Places all possible tile dimensions in arrays */
-void create_tile_arrays(uint32_t* vArray, uint32_t* hArray, int n, int extraHeight,
-    int extraWidth, int tileHeight, int tileWidth) {
+void create_tile_arrays(uint32_t* vArray, uint32_t* hArray, uint32_t n, uint32_t extraHeight,
+    uint32_t extraWidth, uint32_t tileHeight, uint32_t tileWidth) {
     // calculates tile dimensions based on passed-in modulo of dimension length and tile number
-    for (int i = 0; i < n + 1; i++) {
+    for (uint32_t i = 0; i < n + 1; i++) {
         if (extraHeight != 0 && i > extraHeight) {
             vArray[i] = (i * tileHeight) - (i - extraHeight);
         }
@@ -61,13 +64,13 @@ struct Image* transform_image(struct Image* source, void* arg_data) {
         return NULL;
     }
 
-    int n = args->tiles; // num of tiles
-    int width = source->width; // width of source
-    int height = source->height; // height of source
-    int tileWidth = width / n; // base width of each tile
-    int tileHeight = height / n; // base height of each tile
-    int extraWidth = width % n; // extra pixels for tile widths
-    int extraHeight = height % n; // extra pixels for tile heights
+    uint32_t n = args->tiles; // num of tiles
+    uint32_t width = source->width; // width of source
+    uint32_t height = source->height; // height of source
+    uint32_t tileWidth = width / n; // base width of each tile
+    uint32_t tileHeight = height / n; // base height of each tile
+    uint32_t extraWidth = width % n; // extra pixels for tile widths
+    uint32_t extraHeight = height % n; // extra pixels for tile heights
 
     if (extraHeight != 0) {
         tileHeight++;
@@ -81,12 +84,12 @@ struct Image* transform_image(struct Image* source, void* arg_data) {
     create_tile_arrays(vArray, hArray, n, extraHeight, extraWidth, tileHeight, tileWidth);
 
     /* Form smaller tiles and populate new image */
-    for (int y = 0; y < n; y++) {
-        for (int x = 0; x < n; x++) {
+    for (uint32_t y = 0; y < n; y++) {
+        for (uint32_t x = 0; x < n; x++) {
             int tempY = 0; // vertical counter for output
-            for (int i = vArray[y]; i < vArray[y + 1]; i++) {
+            for (uint32_t i = vArray[y]; i < vArray[y + 1]; i++) {
                 int tempX = 0; // horizontal counter for output
-                for (int j = hArray[x]; j < hArray[x + 1]; j++) {
+                for (uint32_t j = hArray[x]; j < hArray[x + 1]; j++) {
                     out->data[i * source->width + j] = source->data[(n * (tempY * source->width)) + (n * tempX)];
                     tempX++;
                 }

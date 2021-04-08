@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include "image_plugin.h"
+#include <string.h>
 
 struct Arguments {
 	// Factor to expose image by.
@@ -22,7 +23,7 @@ const char *get_plugin_desc(void) {
 }
 
 void *parse_arguments(int num_args, char *args[]) {
-    if (num_args != 1 || (atof(args[0]) < 0 || (args[0] == "0.0" && args[0][0] != '0'))) {
+    if (num_args != 1 || (atof(args[0]) < 0 || (strcmp(args[0], "0.0") == 0 && args[0][0] != '0'))) {
         return NULL;
     }
 	struct Arguments *a = (Arguments*)calloc(1, sizeof(Arguments));
