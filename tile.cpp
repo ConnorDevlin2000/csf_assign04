@@ -1,6 +1,7 @@
 //
 // Applies the tile effect to a given png.
 //
+//	Marc Helou - mhelou1 | Connor Devlin - cdevlin4
 
 #include <stdlib.h>
 #include "image_plugin.h"
@@ -31,6 +32,7 @@ void* parse_arguments(int num_args, char* args[]) {
 /* Places all possible tile dimensions in arrays */
 void create_tile_arrays(uint32_t* vArray, uint32_t* hArray, int n, int extraHeight,
     int extraWidth, int tileHeight, int tileWidth) {
+    // calculates tile dimensions based on passed-in modulo of dimension length and tile number
     for (int i = 0; i < n + 1; i++) {
         if (extraHeight != 0 && i > extraHeight) {
             vArray[i] = (i * tileHeight) - (i - extraHeight);
@@ -79,9 +81,9 @@ struct Image* transform_image(struct Image* source, void* arg_data) {
     /* Form smaller tiles and populate new image */
     for (int y = 0; y < n; y++) {
         for (int x = 0; x < n; x++) {
-            int tempY = 0;
+            int tempY = 0; // vertical counter for output
             for (int i = vArray[y]; i < vArray[y + 1]; i++) {
-                int tempX = 0;
+                int tempX = 0; // horizontal counter for output
                 for (int j = hArray[x]; j < hArray[x + 1]; j++) {
                     out->data[i * source->width + j] = source->data[(n * (tempY * source->width)) + (n * tempX)];
                     tempX++;
@@ -91,6 +93,7 @@ struct Image* transform_image(struct Image* source, void* arg_data) {
         }
     }
 
+    // free all dynamically allocated arrays and structs
     free(vArray);
     free(hArray);
     free(args);

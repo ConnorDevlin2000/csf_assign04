@@ -1,6 +1,7 @@
 //
 // Applies the expose effect to a given png.
 //
+//	Marc Helou - mhelou1 | Connor Devlin - cdevlin4
 
 #include <stdlib.h>
 #include "image_plugin.h"
@@ -31,10 +32,11 @@ void *parse_arguments(int num_args, char *args[]) {
 static uint32_t multiplyFactor(uint32_t pix, Arguments *args) {
 	uint8_t r, g, b, a;
 	img_unpack_pixel(pix, &r, &g, &b, &a);
+	// pixel components are cast to uint32 to avoid overflow
 	if (args->factor * (uint32_t)r > 255) {
-		r = 255;
+		r = 255; // maximum value is 255
 	} else {
-		r *= args->factor;
+		r *= args->factor; // otherwise, multiply by factor
 	}
 	if (args->factor * (uint32_t)g > 255) {
 		g = 255;
@@ -46,7 +48,7 @@ static uint32_t multiplyFactor(uint32_t pix, Arguments *args) {
 	} else {
 		b *= args->factor;
 	}
-	return img_pack_pixel(r, g, b, a);
+	return img_pack_pixel(r, g, b, a); // return packed pixels
 }
 
 struct Image *transform_image(struct Image *source, void *arg_data) {
@@ -59,6 +61,7 @@ struct Image *transform_image(struct Image *source, void *arg_data) {
 		return NULL;
 	}
 
+	// Iterate through each pixel, multiplying them by the expose factor
 	unsigned num_pixels = source->width * source->height;
 	for (unsigned i = 0; i < num_pixels; i++) {
 		out->data[i] = multiplyFactor(source->data[i], args);
