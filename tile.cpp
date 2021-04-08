@@ -1,6 +1,7 @@
 //
 // Applies the tile effect to a given png.
 //
+//	Marc Helou - mhelou1 | Connor Devlin - cdevlin4
 
 #include <stdlib.h>
 #include "image_plugin.h"
