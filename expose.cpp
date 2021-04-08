@@ -1,7 +1,9 @@
-//
-// Applies the expose effect to a given png.
-//
-//	Marc Helou - mhelou1 | Connor Devlin - cdevlin4
+/*
+ * Image processing with plugins
+ * CSF Assignment 4
+ * Connor Devlin - cdevlin4@jh.edu
+ * Marc Helou - mhelou1@jh.edu
+ */
 
 #include <stdlib.h>
 #include "image_plugin.h"
