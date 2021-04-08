@@ -154,6 +154,7 @@ int handleCommandLineErrors(int argc, char* argv[]){
     } else if (strcmp(argv[1], "list") != 0 && strcmp(argv[1], "exec") != 0) {
         cout << "Usage: imgproc <command> [<command args...>]\nCommands are:\n\tlist\n\texec <plugin> <input img> <output img> [<plugin args...>]" << endl;
         cerr << "Error: Unknown command" << endl;
+        return 0;
     } else {
         return 1;
     }
