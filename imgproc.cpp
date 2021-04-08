@@ -113,6 +113,7 @@ int main(int argc, char *argv[]){
                             return 1;
                         }
                         img_write_png(transformedImg, argv[4]);
+                        free(arguments);
                         for(int i = 0; i < plugins.size(); i++){
                             dlclose(plugins[i]->handle);
                             free(plugins[i]);
