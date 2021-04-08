@@ -78,6 +78,7 @@ int loadPlugins(DIR* directory, vector<Plugin*> &plugins, const char* PLUGIN_DIR
             //Check if any function pointers are null
             if (p->get_plugin_name == NULL || p->get_plugin_desc == NULL || p->parse_arguments == NULL || p->transform_image == NULL) {
                 cerr << "Error: Could not find required API function" << endl;
+                dlclose(p->handle);
                 free(p);
                 return 0;
             }
