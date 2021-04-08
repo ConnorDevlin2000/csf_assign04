@@ -67,6 +67,7 @@ int loadPlugins(DIR* directory, vector<Plugin*> &plugins, const char* PLUGIN_DIR
             //If the handle is NULL, we cannot load the plugin
             if(p->handle == NULL){
                 cerr << "Error: Could not load plugin" << endl;
+                free(p);
                 return 0;
             }
             //Load in function pointers
