@@ -43,7 +43,7 @@ struct Image *transform_image(struct Image *source, void *arg_data) {
             int x = source->width * i + j;
             int c = source->width * i + (source->width - 1 - j);
             out->data[x] = source->data[c];
-            out->data[c] = source->data[x];
+            out->data[c] = source->data[x]; // Reverses pixel positioning
         }
 	}
 
